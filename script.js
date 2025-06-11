@@ -54,7 +54,7 @@ document.getElementById("caForm").addEventListener("submit", async function (e) 
   }
 
   // Uploading to Cloudinary
-  statusEl.textContent = "⏳ Uploading CV to Cloudinary...";
+  statusEl.textContent = "⏳ Uploading CV..";
   const cloudForm = new FormData();
   cloudForm.append("file", file);
   cloudForm.append("upload_preset", uploadPreset);
