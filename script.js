@@ -35,41 +35,48 @@ window.addEventListener("load", () => {
 // Cloudinary + Google Sheet integration
 const cloudName = "dbgbaazbz";
 const uploadPreset = "cv_upload";
-const scriptURL = "https://script.google.com/macros/s/AKfycbzTHIaRYgbiGs2xbabNfNJdeBh3sB9PZUj2mretM8KOB8POkigpuvFi1N4mf7vY9XIdlQ/exec";
+const scriptURL =
+  "https://script.google.com/macros/s/AKfycbzTHIaRYgbiGs2xbabNfNJdeBh3sB9PZUj2mretM8KOB8POkigpuvFi1N4mf7vY9XIdlQ/exec";
 
 document.getElementById("caForm").addEventListener("submit", async function (e) {
   e.preventDefault();
+
   const form = e.target;
   const formData = new FormData(form);
   const fileInput = document.getElementById("cvUpload");
   const file = fileInput.files[0];
   const statusEl = document.getElementById("uploadStatus");
 
+  // Validation
   if (!file || file.size > 5 * 1024 * 1024) {
-    statusEl.textContent = "❌ File required or must be less than 5MB";
+    statusEl.textContent = "❌ Please upload a file less than 5MB.";
     return;
   }
 
+  // Uploading to Cloudinary
+  statusEl.textContent = "⏳ Uploading CV to Cloudinary...";
   const cloudForm = new FormData();
   cloudForm.append("file", file);
   cloudForm.append("upload_preset", uploadPreset);
 
   try {
-    // Upload to Cloudinary
-    statusEl.textContent = "⏳ Uploading CV...";
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
+    const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
       method: "POST",
       body: cloudForm,
     });
 
-    const data = await res.json();
+    const cloudData = await cloudRes.json();
+    console.log("Cloudinary Response:", cloudData);
 
-    if (!data.secure_url) throw new Error("Cloudinary upload failed");
+    if (!cloudData.secure_url) {
+      throw new Error("No secure URL returned from Cloudinary.");
+    }
 
-    const cvUrl = data.secure_url;
+    const cvUrl = cloudData.secure_url;
 
-    // Submit to Google Sheets
-    statusEl.textContent = "⏳ Submitting form...";
+    // Sending data to Google Sheets
+    statusEl.textContent = "⏳ Submitting form data to Google Sheets...";
+
     const payload = new URLSearchParams({
       fullName: formData.get("fullName"),
       email: formData.get("email"),
@@ -84,15 +91,17 @@ document.getElementById("caForm").addEventListener("submit", async function (e) 
       body: payload,
     });
 
-    const resultText = await sheetRes.text();
-    if (resultText.trim().toLowerCase().includes("success")) {
+    const sheetText = await sheetRes.text();
+    console.log("Google Sheets Response:", sheetText);
+
+    if (sheetText.toLowerCase().includes("success")) {
       statusEl.textContent = "✅ Form submitted successfully!";
       form.reset();
     } else {
-      statusEl.textContent = "❌ Submission failed. Try again.";
+      statusEl.textContent = "❌ Submission to sheet failed. Please try again.";
     }
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error("Upload or submission failed:", error);
     statusEl.textContent = "❌ Upload or submission failed. Please try again!";
   }
 });
