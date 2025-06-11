@@ -35,8 +35,8 @@ window.addEventListener("load", () => {
 // Cloudinary + Google Sheet integration
 const cloudName = "dbgbaazbz";
 const uploadPreset = "cv_upload";
-const scriptURL =
-  "https://script.google.com/macros/s/AKfycbzTHIaRYgbiGs2xbabNfNJdeBh3sB9PZUj2mretM8KOB8POkigpuvFi1N4mf7vY9XIdlQ/exec";
+const scriptURL = "https://your-vercel-project.vercel.app/api/submit";
+
 
 document.getElementById("caForm").addEventListener("submit", async function (e) {
   e.preventDefault();
