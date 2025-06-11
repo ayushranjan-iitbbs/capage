@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Campus Ambassador Program</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Campus Ambassador Program 🚀</h1>
+    <p>
+      Become the face of Tech Zephyr at your university and gain valuable experience,
+      networking opportunities, and exclusive perks. 🌐🎓
+    </p>
+  </header>
+
+  <section class="stats">
+    <div class="stat-card">
+      <h2 id="studentsCount">0+</h2>
+      <p>Student Registrations 👥</p>
+    </div>
+    <div class="stat-card">
+      <h2 id="editionCount">1</h2>
+      <p>Proud 2nd Edition 🏆</p>
+    </div>
+    <div class="stat-card">
+      <h2 id="impressionsCount">0+</h2>
+      <p>Impressions on Unstop 📈</p>
+    </div>
+  </section>
+
+  <section class="main-section">
+    <div class="benefits">
+      <h3>Program Benefits ✨</h3>
+      <div class="benefit-point">
+        <div class="number-circle">1</div>
+        <p><strong>Leadership Experience:</strong> Develop your leadership, communication, and organizational skills. 🧠</p>
+      </div>
+      <div class="benefit-point">
+        <div class="number-circle">2</div>
+        <p><strong>Networking Opportunities:</strong> Connect with professionals, tech enthusiasts, and other ambassadors. 🤝</p>
+      </div>
+      <div class="benefit-point">
+        <div class="number-circle">3</div>
+        <p><strong>Exclusive Perks:</strong> Earn branded merchandise, certificates, and workshop access. 🎁</p>
+      </div>
+      <div class="benefit-point">
+        <div class="number-circle">4</div>
+        <p><strong>Resume Booster:</strong> Practical experience and leadership roles to boost your profile. 📄</p>
+      </div>
+      <div class="benefit-point">
+        <div class="number-circle">5</div>
+        <p><strong>Skill Development:</strong> Improve public speaking, content creation, and marketing skills. 🗣️📢</p>
+      </div>
+      <div class="benefit-point">
+        <div class="number-circle">6</div>
+        <p><strong>Mentorship Access:</strong> Get mentorship from experienced industry leaders. 👨‍🏫</p>
+      </div>
+    </div>
+
+    <div class="form-container">
+      <h3>Application Form 📝</h3>
+      <form id="caForm">
+        <label>Full Name <span class="required">*</span></label>
+        <input type="text" name="fullName" placeholder="Your full name" required />
+
+        <label>Email <span class="required">*</span></label>
+        <input type="email" name="email" placeholder="your.email@university.edu" required />
+
+        <label>Phone Number <span class="required">*</span></label>
+        <input type="text" name="phone" placeholder="Your phone number" required />
+
+        <label>University/College <span class="required">*</span></label>
+        <input type="text" name="university" placeholder="Your university name" required />
+
+        <label>Year of Study <span class="required">*</span></label>
+        <select name="year" required>
+          <option value="">Select Year</option>
+          <option value="1">1st Year</option>
+          <option value="2">2nd Year</option>
+          <option value="3">3rd Year</option>
+          <option value="4">4th Year</option>
+        </select>
+
+        <label for="cvUpload">Upload CV (Max size: 5MB) <span class="required">*</span></label>
+        <input type="file" name="cv" id="cvUpload" accept=".pdf,.doc,.docx" required />
+
+        <button type="submit">Submit 🚀</button>
+        <p id="uploadStatus"></p>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Tech Zephyr Campus Ambassador Program. All rights reserved. 📚</p>
+    <p>Made with ❤️ by Team Zephyr | Connect • Learn • Lead</p>
+    <p>📧 Reach us at: support@techzephyr.in</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
