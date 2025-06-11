@@ -35,7 +35,7 @@ window.addEventListener("load", () => {
 // Cloudinary + Google Sheet integration
 const cloudName = "dbgbaazbz";
 const uploadPreset = "cv_upload";
-const scriptURL = "https://script.google.com/macros/s/AKfycbyumAK-aKQU7VK1MO417CjmKXQrFNhW5iDy1eT_lJsPChpouneyUUr_C087HKLpiRzo/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbzTHIaRYgbiGs2xbabNfNJdeBh3sB9PZUj2mretM8KOB8POkigpuvFi1N4mf7vY9XIdlQ/exec";
 
 document.getElementById("caForm").addEventListener("submit", async function (e) {
   e.preventDefault();
