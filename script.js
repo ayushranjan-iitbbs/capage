@@ -43,10 +43,10 @@ document.getElementById("caForm").addEventListener("submit", async function (e) 
   const formData = new FormData(form);
   const fileInput = document.getElementById("cvUpload");
   const file = fileInput.files[0];
+  const statusEl = document.getElementById("uploadStatus");
 
   if (!file || file.size > 5 * 1024 * 1024) {
-    document.getElementById("uploadStatus").textContent =
-      "❌ File required or must be less than 5MB";
+    statusEl.textContent = "❌ File required or must be less than 5MB";
     return;
   }
 
@@ -56,14 +56,20 @@ document.getElementById("caForm").addEventListener("submit", async function (e) 
 
   try {
     // Upload to Cloudinary
+    statusEl.textContent = "⏳ Uploading CV...";
     const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
       method: "POST",
       body: cloudForm,
     });
+
     const data = await res.json();
+
+    if (!data.secure_url) throw new Error("Cloudinary upload failed");
+
     const cvUrl = data.secure_url;
 
     // Submit to Google Sheets
+    statusEl.textContent = "⏳ Submitting form...";
     const payload = new URLSearchParams({
       fullName: formData.get("fullName"),
       email: formData.get("email"),
@@ -79,17 +85,14 @@ document.getElementById("caForm").addEventListener("submit", async function (e) 
     });
 
     const resultText = await sheetRes.text();
-    if (resultText.includes("success")) {
-      document.getElementById("uploadStatus").textContent =
-        "✅ Form submitted successfully!";
+    if (resultText.trim().toLowerCase().includes("success")) {
+      statusEl.textContent = "✅ Form submitted successfully!";
       form.reset();
     } else {
-      document.getElementById("uploadStatus").textContent =
-        "❌ Submission failed.";
+      statusEl.textContent = "❌ Submission failed. Try again.";
     }
   } catch (err) {
     console.error(err);
-    document.getElementById("uploadStatus").textContent =
-      "❌ Upload or submission failed. Please try again!";
+    statusEl.textContent = "❌ Upload or submission failed. Please try again!";
   }
 });
