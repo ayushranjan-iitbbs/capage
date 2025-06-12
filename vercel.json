@@ -1,7 +1,6 @@
 {
-  "functions": {
-    "api/submit.js": {
-      "runtime": "edge"
-    }
-  }
+  "version": 2,
+  "builds": [
+    { "src": "api/submit.js", "use": "@vercel/node" }
+  ]
 }
