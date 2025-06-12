@@ -13,6 +13,7 @@ const countUp = (el, target, suffix = "", speed = 25) => {
   update();
 };
 
+// Decimal counter animation
 const animateDecimal = (el, start, end, step, delay = 300) => {
   let current = start;
   const interval = setInterval(() => {
@@ -31,10 +32,10 @@ window.addEventListener("load", () => {
   countUp(document.getElementById("impressionsCount"), 55000, "+");
 });
 
-// Cloudinary and Google Sheets
+// Cloudinary + Vercel API integration
 const cloudName = "dbgbaazbz";
 const uploadPreset = "cv_upload";
-const scriptURL = "https://script.google.com/macros/s/AKfycbzTHIaRYgbiGs2xbabNfNJdeBh3sB9PZUj2mretM8KOB8POkigpuvFi1N4mf7vY9XIdlQ/exec";
+const scriptURL = "https://capage.vercel.app/api/submit"; // your proxy
 
 document.getElementById("caForm").addEventListener("submit", async function (e) {
   e.preventDefault();
@@ -45,13 +46,14 @@ document.getElementById("caForm").addEventListener("submit", async function (e) 
   const file = fileInput.files[0];
   const statusEl = document.getElementById("uploadStatus");
 
+  // Validate file
   if (!file || file.size > 5 * 1024 * 1024) {
     statusEl.textContent = "❌ Please upload a file less than 5MB.";
     return;
   }
 
+  // Upload to Cloudinary
   statusEl.textContent = "⏳ Uploading CV...";
-
   const cloudForm = new FormData();
   cloudForm.append("file", file);
   cloudForm.append("upload_preset", uploadPreset);
@@ -63,18 +65,23 @@ document.getElementById("caForm").addEventListener("submit", async function (e) 
     });
 
     const cloudData = await cloudRes.json();
-    if (!cloudData.secure_url) throw new Error("CV upload failed");
+    console.log("Cloudinary Response:", cloudData);
+
+    if (!cloudData.secure_url) {
+      throw new Error("Upload to Cloudinary failed.");
+    }
 
     const cvUrl = cloudData.secure_url;
-    statusEl.textContent = "⏳ Submitting form data to Google Sheets...";
 
+    // Send data to your Vercel backend
+    statusEl.textContent = "⏳ Submitting form data...";
     const payload = {
       fullName: formData.get("fullName"),
       email: formData.get("email"),
       phone: formData.get("phone"),
       university: formData.get("university"),
       year: formData.get("year"),
-      cvUrl,
+      cvUrl: cvUrl,
     };
 
     const sheetRes = await fetch(scriptURL, {
@@ -85,17 +92,17 @@ document.getElementById("caForm").addEventListener("submit", async function (e) 
       body: JSON.stringify(payload),
     });
 
-    const result = await sheetRes.text();
-    console.log("Google Sheet Response:", result);
+    const result = await sheetRes.json();
+    console.log("Sheet Response:", result);
 
-    if (result.toLowerCase().includes("success")) {
+    if (result.status === "success") {
       statusEl.textContent = "✅ Form submitted successfully!";
       form.reset();
     } else {
-      statusEl.textContent = "❌ Submission failed: " + result;
+      statusEl.textContent = "❌ Submission failed. Please try again.";
     }
   } catch (err) {
-    console.error(err);
-    statusEl.textContent = "❌ Upload or submission failed. Please try again!";
+    console.error("Submission Error:", err);
+    statusEl.textContent = "❌ Upload or submission failed. Please try again.";
   }
 });
