@@ -1,3 +1,4 @@
+// Count animations
 const countUp = (el, target, suffix = "", speed = 25) => {
   let count = 0;
   const update = () => {
@@ -30,6 +31,7 @@ window.addEventListener("load", () => {
   countUp(document.getElementById("impressionsCount"), 55000, "+");
 });
 
+// Cloudinary and Google Sheets
 const cloudName = "dbgbaazbz";
 const uploadPreset = "cv_upload";
 const scriptURL = "https://script.google.com/macros/s/AKfycbzTHIaRYgbiGs2xbabNfNJdeBh3sB9PZUj2mretM8KOB8POkigpuvFi1N4mf7vY9XIdlQ/exec";
@@ -48,7 +50,7 @@ document.getElementById("caForm").addEventListener("submit", async function (e) 
     return;
   }
 
-  statusEl.textContent = "⏳ Uploading CV..";
+  statusEl.textContent = "⏳ Uploading CV...";
 
   const cloudForm = new FormData();
   cloudForm.append("file", file);
@@ -61,37 +63,39 @@ document.getElementById("caForm").addEventListener("submit", async function (e) 
     });
 
     const cloudData = await cloudRes.json();
-    if (!cloudData.secure_url) throw new Error("No secure URL returned");
+    if (!cloudData.secure_url) throw new Error("CV upload failed");
 
     const cvUrl = cloudData.secure_url;
+    statusEl.textContent = "⏳ Submitting form data to Google Sheets...";
 
-    statusEl.textContent = "⏳ Submitting form to Google Sheets...";
-
-    const payload = new URLSearchParams({
+    const payload = {
       fullName: formData.get("fullName"),
       email: formData.get("email"),
       phone: formData.get("phone"),
       university: formData.get("university"),
       year: formData.get("year"),
       cvUrl,
-    });
+    };
 
     const sheetRes = await fetch(scriptURL, {
       method: "POST",
-      body: payload,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
     });
 
-    const sheetText = await sheetRes.text();
-    console.log("Google Sheet Response:", sheetText);
+    const result = await sheetRes.text();
+    console.log("Google Sheet Response:", result);
 
-    if (sheetText.toLowerCase().includes("success")) {
+    if (result.toLowerCase().includes("success")) {
       statusEl.textContent = "✅ Form submitted successfully!";
       form.reset();
     } else {
-      statusEl.textContent = "❌ Submission failed: " + sheetText;
+      statusEl.textContent = "❌ Submission failed: " + result;
     }
-  } catch (error) {
-    console.error(error);
-    statusEl.textContent = "❌ Error occurred. Try again!";
+  } catch (err) {
+    console.error(err);
+    statusEl.textContent = "❌ Upload or submission failed. Please try again!";
   }
 });
